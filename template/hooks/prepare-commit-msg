@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Appends up to the last 10 commits into the commit message comment.
+#
+
+function is_new_repository
+{
+    if [[ "$(git log --oneline -1 2>&1)" == "fatal: bad default revision 'HEAD'" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function comment
+{
+    local text="# $1"
+    local msg_file="$2"
+
+    echo "$text" >> "$msg_file"
+}
+
+function append_log
+{
+    if ! is_new_repository; then
+        local logs=$(git log --oneline -10 --no-color)
+        IFS=$'\n' read -rd '' -a logs <<< "$logs"
+
+        comment "The last ${#logs[@]} commits:" "$1"
+        local log
+        for log in "${logs[@]}"; do
+            comment "\t$log" "$1"
+        done
+        comment "" "$1"
+    fi
+}
+
+case "$2,$3" in
+    ,|template,)
+        # "," | "template,"
+        append_log "$1"
+        ;;
+esac
