@@ -20,6 +20,26 @@
 #   <local ref> <local sha1> <remote ref> <remote sha1>
 #
 
+readonly VERSION="0.1.0"
+
+while getopts ":v-:" opt; do
+	case $opt in
+		-)
+			case "${OPTARG}" in
+				version)
+					echo "$VERSION"
+					exit 0
+					;;
+			esac
+			;;
+		v)
+			echo "$VERSION"
+			exit 0
+			;;
+	esac
+done
+OPTIND=1
+
 remote="$1"
 url="$2"
 
