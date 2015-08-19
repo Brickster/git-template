@@ -40,7 +40,7 @@ function append_log
     fi
 }
 
-readonly VERSION="0.1.0"
+readonly VERSION="prepare-commit-msg 0.1.0"
 
 while getopts ":v-:" opt; do
     case $opt in
