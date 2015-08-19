@@ -30,12 +30,18 @@ while getopts ":v-:" opt; do
 					echo "$VERSION"
 					exit 0
 					;;
+				*)
+					echo "Invalid option --${OPTARG}" >&2
+					exit 1
+					;;
 			esac
 			;;
 		v)
 			echo "$VERSION"
 			exit 0
 			;;
+		\?) echo "Invalid option: -$OPTARG" >&2; exit 1;;
+		*)  echo "Unimplemented option: -$opt" >&2; exit 1;;
 	esac
 done
 OPTIND=1
