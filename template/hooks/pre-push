@@ -20,7 +20,7 @@
 #   <local ref> <local sha1> <remote ref> <remote sha1>
 #
 
-readonly VERSION="0.1.0"
+readonly VERSION="pre-push 0.1.0"
 
 while getopts ":v-:" opt; do
 	case $opt in
@@ -30,12 +30,18 @@ while getopts ":v-:" opt; do
 					echo "$VERSION"
 					exit 0
 					;;
+				*)
+					echo "Invalid option --${OPTARG}" >&2
+					exit 1
+					;;
 			esac
 			;;
 		v)
 			echo "$VERSION"
 			exit 0
 			;;
+		\?) echo "Invalid option: -$OPTARG" >&2; exit 1;;
+		*)  echo "Unimplemented option: -$opt" >&2; exit 1;;
 	esac
 done
 OPTIND=1
