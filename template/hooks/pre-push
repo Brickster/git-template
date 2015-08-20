@@ -66,7 +66,7 @@ while read local_ref local_sha remote_ref remote_sha; do
 		fi
 
 		# Check for WIP commit
-		commit=`git rev-list -n 1 --grep 'fixup!' --grep 'squash!' "$range"`
+		commit=`git rev-list -n 1 --grep '^fixup!' --grep '^squash!' "$range"`
 		if [[ -n "$commit" ]]; then
 			if [[ "$remote_sha" == "$z40" ]]; then
 				hint_sha="$remote"
