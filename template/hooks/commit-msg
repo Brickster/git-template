@@ -3,7 +3,8 @@
 # Confirms that a commit message does not exceed 72 characters for any line and suggests one if it does.
 #
 
-readonly MAX_LINE_LENGTH=72
+readonly MAX_SUBJECT_LENGTH=50
+readonly MAX_BODY_LENGTH=72
 readonly VERSION="commit-msg 0.1.0"
 
 while getopts ":v-:" opt; do
@@ -32,18 +33,24 @@ OPTIND=1
 
 corrected=''
 ok=true
+line_count=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
-    if (( "${#line}" > "$MAX_LINE_LENGTH" )) && [[ "$line" != \#* ]] ; then
-        corrected+="$(echo "$line" | fold -w "$MAX_LINE_LENGTH" -s)\n"
+	if (( "$line_count" == 0 )) && (( "${#line}" > "$MAX_SUBJECT_LENGTH" )) && [[ "$line" != \#* ]]; then
+		echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
+		exit 1
+	elif (( "${#line}" > "$MAX_BODY_LENGTH" )) && [[ "$line" != \#* ]]; then
+        corrected+="$(echo "$line" | fold -w "$MAX_BODY_LENGTH" -s)\n"
         ok=false
+		((line_count++))
     elif [[ "$line" != \#* ]]; then
         corrected+="$line\n"
+		((line_count++))
     fi
 done < "$1"
 
 if [[ "$ok" == false ]]; then
     echo "error: maximum line length exceeded" >&2
-    echo "error: all lines must be less than or equal to $MAX_LINE_LENGTH characters" >&2
+    echo "error: all subject lines must be less than or equal to $MAX_BODY_LENGTH characters" >&2
     echo "error: use --no-verify to skip this check next time"
     echo "consider:" >&2
     echo "$(echo -e "$corrected")" >&2 # the nested echo is a cheap hack to remove multiple trailing new lines
