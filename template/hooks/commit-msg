@@ -8,26 +8,26 @@ readonly MAX_BODY_LENGTH=72
 readonly VERSION="commit-msg 0.1.0"
 
 while getopts ":v-:" opt; do
-	case $opt in
-		-)
-			case "${OPTARG}" in
-				version)
-					echo "$VERSION"
-					exit 0
-					;;
+    case $opt in
+        -)
+            case "${OPTARG}" in
+                version)
+                    echo "$VERSION"
+                    exit 0
+                    ;;
                 *)
                     echo "Invalid option --${OPTARG}" >&2
                     exit 1
                     ;;
-			esac
-			;;
-		v)
-			echo "$VERSION"
-			exit 0
-			;;
+            esac
+            ;;
+        v)
+            echo "$VERSION"
+            exit 0
+            ;;
         \?) echo "Invalid option: -$OPTARG" >&2; exit 1;;
         *)  echo "Unimplemented option: -$opt" >&2; exit 1;;
-	esac
+    esac
 done
 OPTIND=1
 
@@ -35,16 +35,16 @@ corrected=''
 ok=true
 line_count=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
-	if (( "$line_count" == 0 )) && (( "${#line}" > "$MAX_SUBJECT_LENGTH" )) && [[ "$line" != \#* ]]; then
-		echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
-		exit 1
-	elif (( "${#line}" > "$MAX_BODY_LENGTH" )) && [[ "$line" != \#* ]]; then
+    if (( "$line_count" == 0 )) && (( "${#line}" > "$MAX_SUBJECT_LENGTH" )) && [[ "$line" != \#* ]]; then
+        echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
+        exit 1
+    elif (( "${#line}" > "$MAX_BODY_LENGTH" )) && [[ "$line" != \#* ]]; then
         corrected+="$(echo "$line" | fold -w "$MAX_BODY_LENGTH" -s)\n"
         ok=false
-		((line_count++))
+        ((line_count++))
     elif [[ "$line" != \#* ]]; then
         corrected+="$line\n"
-		((line_count++))
+        ((line_count++))
     fi
 done < "$1"
 
