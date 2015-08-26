@@ -35,9 +35,15 @@ corrected=''
 ok=true
 line_count=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
-    if (( "$line_count" == 0 )) && (( "${#line}" > "$MAX_SUBJECT_LENGTH" )) && [[ "$line" != \#* ]]; then
-        echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
-        exit 1
+    if (( "$line_count" == 0 )) && [[ "$line" != \#* ]]; then
+        if [[ "$line" == fixup\!* ]] || [[ "$line" == Merge* ]]; then
+            exit 0
+        elif (( "${#line}" > "$MAX_SUBJECT_LENGTH" )); then
+            echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
+            exit 1
+        fi
+        corrected="$line\n"
+        ((line_count++))
     elif (( "$line_count" == 1 )) && (( "${#line}" > "0" )) && [[ "$line" != \#* ]]; then
         echo "error: the subject and body must be separated by a blank line" >&2
         exit 1
