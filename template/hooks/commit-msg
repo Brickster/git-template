@@ -36,7 +36,7 @@ ok=true
 line_count=0
 while IFS='' read -r line || [[ -n "$line" ]]; do
     if (( "$line_count" == 0 )) && [[ "$line" != \#* ]]; then
-        if [[ "$line" == fixup\!* ]]; then
+        if [[ "$line" == fixup\!* ]] || [[ "$line" == Merge* ]]; then
             exit 0
         elif (( "${#line}" > "$MAX_SUBJECT_LENGTH" )); then
             echo "error: the subject must be less than or equal to $MAX_SUBJECT_LENGTH characters" >&2
